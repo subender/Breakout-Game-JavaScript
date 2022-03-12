@@ -1,0 +1,37 @@
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+}
+
+.grid {
+  position: absolute;
+  margin-top: 2rem;
+  width: 72.2rem;
+  height: 50rem;
+  border: 2px solid #999;
+}
+.block {
+  position: absolute;
+  width: 13rem;
+  height: 3rem;
+  background-color: rebeccapurple;
+}
+
+.user {
+  position: absolute;
+  width: 13rem;
+  height: 3rem;
+  background-color: royalblue;
+}
