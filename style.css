@@ -15,6 +15,10 @@ body {
   justify-content: center;
 }
 
+.score {
+  font-size: 4rem;
+  margin-right: 100rem;
+}
 .grid {
   position: absolute;
   margin-top: 2rem;
@@ -34,4 +38,12 @@ body {
   width: 13rem;
   height: 3rem;
   background-color: royalblue;
+}
+
+.ball {
+  position: absolute;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 100rem;
+  background-color: #ff6347;
 }
