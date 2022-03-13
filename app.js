@@ -1,9 +1,17 @@
 const grid = document.querySelector(".grid");
+const score = document.querySelector(".score");
 const blockWidth = 13;
 const blockHeight = 3;
 const boardWidth = 72;
+const boardHeight = 50;
+const ballDiameter = 2;
+let timerId;
 const userStartPosition = [29, 1];
+const ballStartPosition = [34, 5];
+let ballCurrentPosition = ballStartPosition;
 let userCurrentPosition = userStartPosition;
+let xDirection = 0.2;
+let yDirection = 0.2;
 
 class Block {
   constructor(xAxis, yAxis) {
@@ -51,9 +59,99 @@ function drawUser() {
   user.style.bottom = userCurrentPosition[1] + "rem";
 }
 
+//Draw Ball
+function drawBall() {
+  ball.style.left = ballStartPosition[0] + "rem";
+  ball.style.bottom = ballStartPosition[1] + "rem";
+}
+
 //Creating user
 
 const user = document.createElement("div");
 user.classList.add("user");
 drawUser();
 grid.appendChild(user);
+
+//move user
+
+function moveUser(e) {
+  console.log(e.key);
+  switch (e.key) {
+    case "ArrowLeft":
+      if (userCurrentPosition[0] >= 1) {
+        userCurrentPosition[0] -= 1;
+        drawUser();
+      }
+      break;
+
+    case "ArrowRight":
+      if (userCurrentPosition[0] < boardWidth - blockWidth - 0.5) {
+        userCurrentPosition[0] += 1;
+        drawUser();
+      }
+      break;
+  }
+}
+
+//listning for a  key press in the document
+document.addEventListener("keydown", moveUser);
+
+// create ball
+
+const ball = document.createElement("div");
+ball.classList.add("ball");
+drawBall();
+grid.appendChild(ball);
+
+// Ball Movement
+
+function moveBall() {
+  ballCurrentPosition[0] += xDirection;
+  ballCurrentPosition[1] += yDirection;
+  drawBall();
+  checkForCollisions();
+  console.log(ballCurrentPosition);
+}
+
+timerId = setInterval(moveBall, 30);
+
+//Checks for collisions
+
+function checkForCollisions() {
+  //wall collisions
+  if (
+    ballCurrentPosition[0] > boardWidth - ballDiameter ||
+    ballCurrentPosition[1] >= boardHeight - ballDiameter ||
+    ballCurrentPosition[0] <= 0
+  ) {
+    changeDirection();
+  }
+
+  if (ballCurrentPosition[1] <= 0) {
+    clearInterval(timerId);
+    score.innerHTML = "You Lose!!";
+    document.removeEventListener("keydown", moveUser);
+  }
+}
+
+function changeDirection() {
+  if (xDirection === 0.2 && yDirection === 0.2) {
+    yDirection = -0.2;
+    return;
+  }
+
+  if (xDirection === 0.2 && yDirection === -0.2) {
+    xDirection = -0.2;
+    return;
+  }
+
+  if (xDirection === -0.2 && yDirection === -0.2) {
+    yDirection = 0.2;
+    return;
+  }
+
+  if (xDirection === -0.2 && yDirection === 0.2) {
+    xDirection = 0.2;
+    return;
+  }
+}
