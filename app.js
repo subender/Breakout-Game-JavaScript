@@ -1,5 +1,5 @@
 const grid = document.querySelector(".grid");
-const score = document.querySelector(".score");
+const scoreEl = document.querySelector(".score");
 const blockWidth = 13;
 const blockHeight = 3;
 const boardWidth = 72;
@@ -10,8 +10,9 @@ const userStartPosition = [29, 1];
 const ballStartPosition = [34, 5];
 let ballCurrentPosition = ballStartPosition;
 let userCurrentPosition = userStartPosition;
-let xDirection = 0.2;
+let xDirection = -0.2;
 let yDirection = 0.2;
+let score = 0;
 
 class Block {
   constructor(xAxis, yAxis) {
@@ -110,7 +111,6 @@ function moveBall() {
   ballCurrentPosition[1] += yDirection;
   drawBall();
   checkForCollisions();
-  console.log(ballCurrentPosition);
 }
 
 timerId = setInterval(moveBall, 30);
@@ -118,18 +118,54 @@ timerId = setInterval(moveBall, 30);
 //Checks for collisions
 
 function checkForCollisions() {
-  //wall collisions
+  // Blocks collision
+
+  for (let i = 0; i < blocksArray.length; i++) {
+    if (
+      ballCurrentPosition[0] > blocksArray[i].bottomLeft[0] &&
+      ballCurrentPosition[0] < blocksArray[i].bottomRight[0] &&
+      ballCurrentPosition[1] + ballDiameter > blocksArray[i].bottomLeft[1] &&
+      ballCurrentPosition[1] < blocksArray[i].topLeft[1]
+    ) {
+      const allBlocks = Array.from(document.querySelectorAll(".block"));
+      allBlocks[i].classList.remove("block");
+      allBlocks.splice(i, 1);
+      changeDirection();
+      score++;
+      scoreEl.innerHTML = score;
+
+      // check for win
+
+      if (score === 15) {
+        scoreEl.innerHTML = "You Win!";
+        clearInterval(timerId);
+        document.removeEventListener("keydown", moveUser);
+      }
+    }
+  }
+
+  //Check for user collision
+
+  if (
+    ballCurrentPosition[0] > userCurrentPosition[0] &&
+    ballCurrentPosition[0] < userCurrentPosition[0] + blockWidth &&
+    ballCurrentPosition[1] > userCurrentPosition[1] &&
+    ballCurrentPosition[1] < userCurrentPosition[1] + blockHeight
+  ) {
+    changeDirection();
+  }
   if (
     ballCurrentPosition[0] > boardWidth - ballDiameter ||
     ballCurrentPosition[1] >= boardHeight - ballDiameter ||
     ballCurrentPosition[0] <= 0
   ) {
+    //wall collisions
     changeDirection();
   }
 
   if (ballCurrentPosition[1] <= 0) {
     clearInterval(timerId);
-    score.innerHTML = "You Lose!!";
+    scoreEl.innerHTML = "You Lose!!";
     document.removeEventListener("keydown", moveUser);
   }
 }
